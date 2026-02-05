@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teddy Day - 10 Feb 🧸</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Emilys+Candy&family=Love+Ya+Like+A+Sister&family=Noto+Color+Emoji&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="teddy.css">
+
+    <!-- Preload Transition Image -->
+    <link rel="preload" href="../assets/images/decorations/home_page.jpg" as="image">
+
+    <!-- Critical CSS to prevent white flash -->
+    <style>
+        body {
+            background-color: #ffb7c5;
+            /* Match overlay color */
+        }
+
+        #transition-overlay {
+            display: block !important;
+            /* Force display */
+            background: #ffb7c5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Cursor Trail Canvas -->
+    <canvas id="cursor-trail-canvas"></canvas>
+
+    <!-- Transition Overlay -->
+    <div id="transition-overlay">
+        <img src="../assets/images/decorations/home_page.jpg" alt="Loading">
+    </div>
+
+    <div class="game-wrapper">
+        <div id="game-container">
+            <!-- Layer 1: Factory Background -->
+            <div id="factory-bg"></div>
+
+            <!-- Layer 2: Conveyor Belt -->
+            <div id="conveyor-belt"></div>
+
+            <!-- Layer 3: Game Elements -->
+            <div id="teddy" class="running"></div>
+
+            <!-- Level 4: Foreground Overlay -->
+            <div id="foreground"></div>
+
+            <!-- Character Guide -->
+            <div class="character-guide hidden" id="character-guide">
+                <img src="../assets/images/character/arn_point.png" alt="Guide Character" class="character-img">
+            </div>
+
+            <!-- Text Bubble Image -->
+            <img id="text-bubble" src="assets/text_bubble.png" class="hidden" alt="Text Bubble">
+
+
+
+            <!-- Obstacles will be injected here by JS -->
+
+            <!-- UI: Start Screen -->
+            <div id="start-screen" class="screen">
+                <img src="assets/title.png" alt="Teddy Day" class="title-img" id="start-title">
+                <img src="assets/Play.png" alt="Play Game" class="play-btn-img" id="start-btn">
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/access-control.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="teddy.js"></script>
+
+    <!-- Cursor Trail Effect -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.6.2/pixi.min.js'></script>
+    <script src='https://unpkg.com/pixi-particles@2.1.9'></script>
+    <script src="../js/cursor-trail.js"></script>
+</body>
+
+</html>

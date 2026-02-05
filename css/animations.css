@@ -1,0 +1,123 @@
+/* Animations */
+
+@keyframes float {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.floating-heart {
+    position: fixed;
+    bottom: -10vh;
+    color: var(--secondary-color);
+    font-size: 24px;
+    font-family: var(--font-emoji);
+    /* Use Noto Color Emoji */
+    animation: float 10s linear infinite;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.8;
+    filter: drop-shadow(0 0 5px rgba(255, 183, 197, 0.5));
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 1.5s ease-out forwards;
+    opacity: 0;
+}
+
+/* --- New Entry Animations --- */
+@keyframes slideInFromTop {
+    0% {
+        transform: translateY(-150%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInFromBottom {
+    0% {
+        transform: translateY(150%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* --- New Exit Animations --- */
+@keyframes bounceUpAndOut {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    30% {
+        transform: translateY(20px);
+        /* Bounces slightly down */
+    }
+
+    100% {
+        transform: translateY(-150vh);
+        /* Flies up */
+        opacity: 0;
+    }
+}
+
+@keyframes fallDownAndOut {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    30% {
+        transform: translateY(-20px);
+        /* Bounces slightly up */
+    }
+
+    100% {
+        transform: translateY(150vh);
+        /* Falls down */
+        opacity: 0;
+    }
+}
+
+/* --- Animation Classes --- */
+.anim-entry-top {
+    animation: slideInFromTop 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.anim-entry-bottom {
+    animation: slideInFromBottom 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.anim-exit-top {
+    animation: bounceUpAndOut 0.8s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards !important;
+}
+
+.anim-exit-bottom {
+    animation: fallDownAndOut 0.8s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards !important;
+}

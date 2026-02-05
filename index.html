@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine Week</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Emilys+Candy&family=Love+Ya+Like+A+Sister&family=Noto+Color+Emoji&display=swap"
+        rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <style>
+        body {
+            background: url('assets/images/decorations/home_page.jpg') no-repeat center center fixed;
+            background-size: cover;
+            /* Fallback color */
+            background-color: #ffb7c5;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            /* NO SCROLL */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Container for content to ensure it stays together */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transform: scale(0.9);
+            /* Scale down slightly to ensure fit on smaller 1080p screens if needed */
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .hero img {
+            max-width: 90vw;
+            /* title size adjust */
+            max-height: 25vh;
+            /* title size adjust */
+            animation: titleFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes titleFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Spiral Calendar Styles */
+        .calendar-wrapper {
+            width: 450px;
+            /* Fixed proportional width */
+            background: #fff;
+            border-radius: 40px;
+            padding: 0 0 2px;
+            /* calender height adjust */
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            font-family: var(--font-body);
+            transform: rotate(-5deg);
+            /* Default rotation */
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            /* Smooth springy effect */
+            margin-top: 20px;
+            /* Ensure space for rotation */
+        }
+
+        .calendar-wrapper:hover {
+            transform: rotate(0deg) scale(1.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        /* Top black holes for spirals */
+        .spiral-holes {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            position: absolute;
+            top: -25px;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .hole {
+            width: 28px;
+            height: 55px;
+            background: #1a1a1a;
+            border-radius: 20px;
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        /* Highlight on the ring */
+        .hole::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            width: 10px;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: rotate(20deg);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 50px 30px 20px;
+            font-size: 2.8rem;
+            color: black;
+            font-weight: bold;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            row-gap: 15px;
+        }
+
+        .weekday-row {
+            display: contents;
+        }
+
+        .weekday {
+            background: #ff69b4;
+            color: white;
+            padding: 8px 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .weekday:first-child {
+            border-top-left-radius: 0;
+        }
+
+        .day-cell {
+            position: relative;
+            z-index: 1;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: black;
+            font-weight: bold;
+            justify-self: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        .day-cell.highlight {
+            background-color: #ff69b4;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(255, 105, 180, 0.4);
+        }
+
+        .day-cell.highlight:hover {
+            transform: scale(1.1);
+            background-color: #ff1493;
+        }
+
+        .day-cell.inactive {
+            color: #999;
+        }
+
+        /* Fix for animation glitches when navigating back */
+        @keyframes resetAnimation {
+            from {
+                opacity: 0.99;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Force animation restart on page load */
+        .hero img {
+            animation: titleFloat 4s ease-in-out infinite, resetAnimation 0.01s;
+        }
+
+        .calendar-wrapper {
+            animation: resetAnimation 0.01s;
+        }
+    </style>
+</head>
+
+
+
+<body>
+    <!-- Cursor Trail Canvas -->
+    <canvas id="cursor-trail-canvas"></canvas>
+
+    <div class="main-container">
+        <div class="hero anim-entry-top">
+            <img src="assets/images/decorations/Title.png" alt="A Journey to Valentine's Day">
+        </div>
+
+        <!-- Calendar Container -->
+        <div class="calendar-anim-box anim-entry-bottom">
+            <div class="calendar-wrapper">
+                <!-- Spiral Rings/Holes -->
+                <div class="spiral-holes">
+                    <div class="hole"></div>
+                    <div class="hole"></div>
+                    <div class="hole"></div>
+                    <div class="hole"></div>
+                    <div class="hole"></div>
+                </div>
+
+                <!-- Month Header -->
+                <div class="calendar-header">
+                    <span>February</span>
+                    <span>2026</span>
+                </div>
+
+                <!-- Grid -->
+                <div class="calendar-grid">
+                    <!-- Weekdays - Styled as a pink strip visually via background on cells -->
+                    <div class="weekday" style="background: #ff69b4; color: white;">Sun</div>
+                    <div class="weekday" style="background: #ff69b4; color: white;">Mon</div>
+                    <div class="weekday" style="background: #ff69b4; color: white;">Tue</div>
+                    <div class="weekday" style="background: #ff69b4; color: white;">Wed</div>
+                    <div class="weekday" style="background: #ff69b4; color: white;">Thu</div>
+                    <div class="weekday" style="background: #ff69b4; color: white;">Fri</div>
+                    <div class="weekday" style="background: #ff69b4; color: white;">Sat</div>
+
+                    <!-- Days -->
+                    <!-- Week 1: Feb 1 is Sunday -->
+                    <div class="day-cell">1</div>
+                    <div class="day-cell">2</div>
+                    <div class="day-cell">3</div>
+                    <div class="day-cell">4</div>
+                    <div class="day-cell">5</div>
+                    <div class="day-cell">6</div>
+
+                    <!-- 7 Feb -->
+                    <div class="day-cell highlight" onclick="handleDayClick('02-07', 'rose-day')">7</div>
+
+                    <!-- Week 2 -->
+                    <div class="day-cell highlight" onclick="handleDayClick('02-08', 'propose-day')">8</div>
+                    <div class="day-cell highlight" onclick="handleDayClick('02-09', 'chocolate-day')">9</div>
+                    <div class="day-cell highlight" onclick="handleDayClick('02-10', 'teddy-day')">10</div>
+                    <div class="day-cell highlight" onclick="handleDayClick('02-11', 'promise-day')">11</div>
+                    <div class="day-cell highlight" onclick="handleDayClick('02-12', 'hug-day')">12</div>
+                    <div class="day-cell highlight" onclick="handleDayClick('02-13', 'kiss-day')">13</div>
+                    <div class="day-cell highlight" onclick="handleDayClick('02-14', 'valentines-day')">14</div>
+
+                    <!-- Rest of Month -->
+                    <div class="day-cell">15</div>
+                    <div class="day-cell">16</div>
+                    <div class="day-cell">17</div>
+                    <div class="day-cell">18</div>
+                    <div class="day-cell">19</div>
+                    <div class="day-cell">20</div>
+                    <div class="day-cell">21</div>
+                    <div class="day-cell">22</div>
+                    <div class="day-cell">23</div>
+                    <div class="day-cell">24</div>
+                    <div class="day-cell">25</div>
+                    <div class="day-cell">26</div>
+                    <div class="day-cell">27</div>
+                    <div class="day-cell">28</div>
+
+                    <!-- Padding for grid complete -->
+                    <div class="day-cell" style="opacity: 0;">1</div>
+                    <div class="day-cell" style="opacity: 0;">2</div>
+                    <div class="day-cell" style="opacity: 0;">3</div>
+                    <div class="day-cell" style="opacity: 0;">4</div>
+                    <div class="day-cell" style="opacity: 0;">5</div>
+                    <div class="day-cell" style="opacity: 0;">6</div>
+                    <div class="day-cell" style="opacity: 0;">7</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/access-control.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Fix for bfcache (browser back-forward cache) preserving animation states
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                // Page was restored from bfcache, reset animations
+                const hero = document.querySelector('.hero');
+                const calendarBox = document.querySelector('.calendar-anim-box');
+
+                if (hero) {
+                    hero.classList.remove('anim-exit-top');
+                    hero.style.animation = 'none';
+                    // Force reflow to restart animation
+                    void hero.offsetWidth;
+                    hero.style.animation = '';
+                }
+
+                if (calendarBox) {
+                    calendarBox.classList.remove('anim-exit-bottom');
+                    calendarBox.style.animation = 'none';
+                    void calendarBox.offsetWidth;
+                    calendarBox.style.animation = '';
+                }
+            }
+        });
+
+        function handleDayClick(dateStr, folderName) {
+            if (AccessControl.isDateAllowed(dateStr)) {
+                // Exit Animations
+                const hero = document.querySelector('.hero');
+                const calendarBox = document.querySelector('.calendar-anim-box');
+
+                hero.classList.add('anim-exit-top');
+                calendarBox.classList.add('anim-exit-bottom');
+
+                // Wait for animation
+                setTimeout(() => {
+                    const devParam = AccessControl.isDeveloperMode() ? '?dev=true' : '';
+                    window.location.href = `${folderName}/index.html${devParam}`;
+                }, 800);
+            } else {
+                AccessControl.handleLocked(); // Show Modal
+            }
+        }
+    </script>
+
+    <!-- Cursor Trail Effect -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.6.2/pixi.min.js'></script>
+    <script src='https://unpkg.com/pixi-particles@2.1.9'></script>
+    <script src="js/cursor-trail.js"></script>
+</body>
+
+</html>

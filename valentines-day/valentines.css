@@ -1,0 +1,669 @@
+/* Global Valentines Variable */
+:root {
+    --primary-color: #ff3366;
+    --secondary-color: #ff99cc;
+    --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    --puzzle-size: 350px;
+    /* Responsive size */
+}
+
+body {
+    background: url('assets/bg.png') no-repeat center center fixed;
+    background-size: cover;
+    overflow-x: hidden;
+    font-family: 'Love Ya Like A Sister', cursive;
+}
+
+/* --- Floating Hearts Background --- */
+.hearts-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.floating-heart {
+    position: absolute;
+    bottom: -100px;
+    font-size: 20px;
+    color: rgba(255, 51, 102, 0.3);
+    animation: floatUp 15s linear infinite;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.5;
+    }
+
+    90% {
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* --- Main Container --- */
+.container {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.main-title {
+    font-family: 'Emilys Candy', cursive;
+    font-size: 4rem;
+    color: #ffe5d9;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 100, 100, 0.4);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.subtitle {
+    color: white !important;
+    /* Updated to White */
+    /* Updated to White */
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    text-align: center;
+    background: transparent !important;
+    padding: 0;
+}
+
+/* --- Three Puzzles Container --- */
+#puzzles-container {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* --- Puzzle Wrapper with Flip --- */
+.puzzle-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    perspective: 1000px;
+}
+
+.puzzle-flipper {
+    position: relative;
+    width: var(--puzzle-size);
+    height: var(--puzzle-size);
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+}
+
+.puzzle-wrapper.flipped .puzzle-flipper {
+    transform: rotateY(180deg);
+}
+
+.puzzle-front,
+.puzzle-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+}
+
+.puzzle-back {
+    transform: rotateY(180deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Sweetheart Gradient + Subtle Pattern */
+    background:
+        radial-gradient(circle, rgba(255, 255, 255, 0.2) 2px, transparent 2.5px),
+        linear-gradient(135deg, #ff9a9e 0%, #fa709a 100%);
+    background-size: 20px 20px, 100% 100%;
+
+    /* Stitching Border */
+    border: 4px dashed rgba(255, 255, 255, 0.6);
+    border-radius: 15px;
+
+    box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    position: absolute;
+    /* Re-affirm absolute */
+}
+
+.back-text {
+    font-family: 'Emilys Candy', cursive;
+    font-size: 3.5rem;
+    color: #ffe5d9;
+    text-shadow: 3px 3px 0 #c2185b;
+    /* Hard Edge Dark Pink */
+    text-align: center;
+    padding: 20px;
+}
+
+/* --- Puzzle Grid --- */
+.puzzle-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: var(--puzzle-size);
+    height: var(--puzzle-size);
+    gap: 2px;
+    position: relative;
+    overflow: visible;
+    /* Allow pieces to rotate without being cut off */
+    transition: box-shadow 0.3s ease;
+}
+
+/* Shadow appears after pieces load */
+.puzzle-grid.show-shadow {
+    box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.5);
+    /* Hard-edged drop shadow with 50% opacity */
+}
+
+.puzzle-piece {
+    width: 100%;
+    height: 100%;
+    background-size: var(--puzzle-size) var(--puzzle-size);
+    background-repeat: no-repeat;
+    cursor: url('../assets/BODAMOR_english/link.cur'), pointer !important;
+    transition: transform 0.3s ease;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    transform-origin: center center;
+}
+
+.puzzle-piece:hover {
+    box-shadow: 0 0 15px rgba(255, 51, 102, 0.6);
+    filter: brightness(1.1);
+    cursor: url('../assets/BODAMOR_english/link.cur'), pointer !important;
+}
+
+/* Flash Effect */
+.flash-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.hint-text {
+    margin-top: 15px;
+    color: #ffeaa7;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Puzzle Complete Animation */
+.puzzle-grid.puzzle-complete {
+    animation: celebrateComplete 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 15px 40px rgba(255, 51, 102, 0.5);
+    gap: 0;
+    /* Remove grid lines */
+    padding: 0;
+    /* Remove padding too for seamless look */
+}
+
+@keyframes celebrateComplete {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Remove piece borders when complete */
+.puzzle-grid.puzzle-complete .puzzle-piece {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.pulse-hint {
+    animation: pulseText 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseText {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+/* --- Envelope Animation --- */
+#envelope-wrapper {
+    perspective: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.envelope {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    background: #ff5e62;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.5s;
+}
+
+.envelope:hover {
+    transform: scale(1.02);
+}
+
+.envelope .front {
+    position: absolute;
+    width: 0;
+    height: 0;
+    z-index: 3;
+}
+
+.envelope .flap {
+    border-left: 150px solid transparent;
+    border-right: 150px solid transparent;
+    border-top: 100px solid #ff3333;
+    /* Darker red */
+    border-bottom: 0 solid transparent;
+    transform-origin: top;
+    transition: transform 0.8s ease-in-out, z-index 0.2s;
+    width: 0;
+    height: 0;
+    top: 0;
+    left: 0;
+    z-index: 5;
+}
+
+.envelope .pocket {
+    border-left: 150px solid #ff5e62;
+    border-right: 150px solid #ff5e62;
+    border-top: 100px solid transparent;
+    border-bottom: 100px solid #ff8084;
+    /* Lighter */
+    top: 0;
+    left: 0;
+    border-radius: 0 0 5px 5px;
+}
+
+.envelope .letter {
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    width: 280px;
+    height: 180px;
+    background: #fff;
+    border-radius: 5px;
+    z-index: 2;
+    transition: transform 1s ease-in-out, z-index 0.2s;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    /* Hide text initially if needed */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Open State */
+.envelope.open .flap {
+    transform: rotateX(180deg);
+    z-index: 1;
+}
+
+.envelope.open .letter {
+    transform: translateY(-220px) scale(1.5);
+    z-index: 10;
+    height: auto;
+    /* Allow growth */
+    min-height: 250px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    cursor: auto;
+}
+
+/* Letter Content */
+.letter-content {
+    font-family: 'Dancing Script', cursive;
+    /* Handwritten feel */
+    font-size: 1.1rem;
+    color: #333;
+    line-height: 1.6;
+    text-align: center;
+    opacity: 0;
+    /* Hidden until updated */
+    transition: opacity 1s ease 0.5s;
+    font-weight: bold;
+}
+
+.envelope.open .letter-content {
+    opacity: 1;
+}
+
+.click-hint {
+    margin-top: 50px;
+    color: #ffcba4;
+    animation: pulse 2s infinite;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+
+
+.nav-btn {
+    margin-top: 30px;
+}
+
+/* Responsive */
+@media (max-width: 400px) {
+    :root {
+        --puzzle-size: 300px;
+    }
+
+    .envelope {
+        transform: scale(0.9);
+    }
+
+    .envelope:hover {
+        transform: scale(0.92);
+    }
+
+    .envelope.open .letter {
+        transform: translateY(-200px) scale(1.3);
+    }
+}
+
+/* ===== START SCREEN STYLES ===== */
+#start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 9999;
+    /* Vignette Effect */
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.5) 100%), rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(8px);
+    animation: fadeInOverlay 1s ease-out forwards;
+}
+
+@keyframes fadeInOverlay {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOutOverlay {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.screen-exit {
+    animation: fadeOutOverlay 0.8s ease-out forwards !important;
+}
+
+/* Start Screen Animations */
+@keyframes slideDownIn {
+    from {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpIn {
+    from {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+}
+
+@keyframes slideDownOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
+
+.title-img {
+    max-width: 80%;
+    height: auto;
+    /* animation: slideDownIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; REMOVED for manual trigger */
+    opacity: 0;
+    /* Hidden initially */
+}
+
+.play-btn-img {
+    width: 200px;
+    height: auto;
+    cursor: pointer;
+    transition: transform 0.2s;
+    /* animation: slideUpIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; REMOVED for manual trigger */
+    opacity: 0;
+    /* Hidden initially */
+}
+
+.play-btn-img:hover {
+    transform: scale(1.1);
+}
+
+.title-exit {
+    animation: slideUpOut 0.8s cubic-bezier(0.5, 0, 0.75, 0) forwards !important;
+}
+
+.btn-exit {
+    animation: slideDownOut 0.8s cubic-bezier(0.5, 0, 0.75, 0) forwards !important;
+}
+
+/* --- Transition Overlay --- */
+#transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20000;
+    background: #ffb7c5;
+}
+
+#transition-overlay img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.overlay-fall {
+    animation: fallDownTransition 1.2s ease-in forwards;
+}
+
+@keyframes fallDownTransition {
+    to {
+        transform: translateY(100vh);
+    }
+}
+
+/* --- Manual Triggers --- */
+.anim-title-enter {
+    animation: slideDownIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.anim-btn-enter {
+    animation: slideUpIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Video Outro Styles */
+#video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    z-index: 9998;
+    /* Below cursor trail (9999) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#outro-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Final Outro Screen */
+#outro-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    z-index: 9999;
+    /* Higher to ensure visibility */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.outro-text {
+    font-family: 'Emilys Candy', cursive;
+    color: #ff3366;
+    font-size: 3rem;
+    margin-bottom: 40px;
+    text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+    border-right: 4px solid #ff3366;
+    /* Cursor */
+    white-space: nowrap;
+    overflow: hidden;
+    animation: blinkCursor 0.8s step-end infinite;
+}
+
+.outro-text.typing-done {
+    border-right: 4px solid transparent;
+    animation: none;
+}
+
+@keyframes blinkCursor {
+    50% {
+        border-color: transparent;
+    }
+}
+
+.outro-btn {
+    font-size: 1.5rem;
+    padding: 15px 40px;
+    border-radius: 30px;
+    background: white;
+    color: #ff3366;
+    border: 2px solid #ff3366;
+    transition: all 0.5s ease;
+    opacity: 0;
+    /* Hidden initially */
+    transform: translateY(20px);
+    pointer-events: none;
+}
+
+.outro-btn.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.outro-btn:hover {
+    background: #ff3366;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 51, 102, 0.6);
+}

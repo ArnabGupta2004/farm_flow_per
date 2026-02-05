@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose Day - 7 Feb 🌹</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Emilys+Candy&family=Love+Ya+Like+A+Sister&family=Noto+Color+Emoji&display=swap"
+        rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="rose.css">
+
+    <!-- Preload Transition Image -->
+    <link rel="preload" href="../assets/images/decorations/home_page.jpg" as="image">
+
+    <!-- Critical CSS to prevent white flash -->
+    <style>
+        body {
+            background-color: #ffb7c5;
+            /* Match overlay color */
+        }
+
+        #transition-overlay {
+            display: block !important;
+            /* Force display */
+            background: #ffb7c5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Cursor Trail Canvas -->
+    <canvas id="cursor-trail-canvas"></canvas>
+
+    <!-- Transition Overlay -->
+    <div id="transition-overlay">
+        <img src="../assets/images/decorations/home_page.jpg" alt="Loading">
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="screen">
+        <img src="assets/title.png" alt="Rose Day" class="title-img" id="start-title">
+        <img src="assets/Play.png" alt="Play Game" class="play-btn-img" id="start-btn">
+    </div>
+
+    <!-- Background Images -->
+    <div class="sky-background">
+        <img src="assets/morning_sky.jpg" alt="Morning Sky" class="sky-img day-sky active">
+        <img src="assets/night_sky.jpg" alt="Night Sky" class="sky-img night-sky">
+    </div>
+
+    <!-- Celestial Bodies -->
+    <div class="celestial-bodies">
+        <img src="assets/sun.png" alt="Sun" class="celestial sun active">
+        <img src="assets/moon.png" alt="Moon" class="celestial moon">
+    </div>
+
+    <!-- Soil Base -->
+    <div class="soil-container" id="dropZone">
+        <img src="assets/soil1.png" alt="Soil Base" class="soil-base">
+        <img src="assets/seed_planted.png" alt="Planted Seed" class="plant-stage seed-planted hidden">
+        <img src="assets/sprout.png" alt="Sprout" class="plant-stage sprout hidden">
+        <img src="assets/bud.png" alt="Rose Bud" class="plant-stage bud hidden">
+        <img src="assets/rose.png" alt="Rose" class="plant-stage rose hidden">
+    </div>
+
+    <!-- Character Guide -->
+    <div class="character-guide hidden" id="character-guide">
+        <img src="../assets/images/character/arn_point.png" alt="Guide Character" class="character-img">
+    </div>
+
+    <!-- Celebration Popup -->
+    <div id="celebration-popup" class="popup-overlay hidden">
+        <div class="popup-content">
+            <h2>Happy Rose Day!</h2>
+            <p>My love grows for you every day!</p>
+            <a href="../index.html" class="pulse-btn">Go to Calendar</a>
+        </div>
+    </div>
+
+    <!-- Game Hint -->
+    <div id="game-hint" class="hidden">Plant the Seed...</div>
+
+    <!-- Game Elements -->
+    <div class="game-controls">
+        <div class="draggable-item" id="seedItem" draggable="true">
+            <img src="assets/seed.png" alt="Seed">
+            <span class="tooltip">Drag to plant!</span>
+        </div>
+
+        <div class="draggable-item hidden" id="waterCanItem" draggable="true">
+            <img src="assets/can.png" alt="Watering Can">
+            <span class="tooltip">Water the seed!</span>
+        </div>
+    </div>
+
+    <!-- Custom Drag Ghosts -->
+    <div id="custom-drag-ghost" class="custom-ghost hidden">
+        <img src="assets/can.png" alt="Ghost Can" class="ghost-can">
+        <div class="ghost-water-drops">
+            <span class="drop"></span>
+            <span class="drop"></span>
+            <span class="drop"></span>
+            <span class="drop"></span>
+            <span class="drop"></span>
+        </div>
+    </div>
+    <!-- Helper for hiding default drag image -->
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" id="empty-drag-image"
+        style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; top: -100px;">
+
+    <!-- Day/Night Toggle -->
+    <div class="day-night-toggle">
+        <span class="toggle-icon sun-icon">☀️</span>
+        <label class="toggle-switch">
+            <input type="checkbox" id="dayNightToggle">
+            <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-icon moon-icon">🌙</span>
+    </div>
+
+    <!-- Your content here -->
+
+    <!-- Scripts -->
+    <script src="../js/access-control.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="rose.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            AccessControl.redirectIfLocked('02-07');
+        });
+    </script>
+
+    <!-- Cursor Trail Effect -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.6.2/pixi.min.js'></script>
+    <script src='https://unpkg.com/pixi-particles@2.1.9'></script>
+    <script src="../js/cursor-trail.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,488 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('assets/bg.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: black;
+    overflow: hidden;
+    position: relative;
+    /* Needed for absolute children */
+}
+
+/* The Region Visualizer */
+#game-area {
+    position: absolute;
+    /* Center the box */
+    top: 46.5%;
+    left: 49.8%;
+    transform: translate(-50%, -50%);
+
+    width: 401px;
+    /* Adjust width */
+    height: 500px;
+    /* Adjust height */
+
+    /* Animated grid background */
+    background-image:
+        linear-gradient(rgba(255, 105, 180, 0.1) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(255, 105, 180, 0.1) 2px, transparent 2px);
+    background-size: 30px 30px;
+    background-position: 0 0;
+    animation: gridScroll 2s linear infinite;
+
+    /* border: 3px solid red; */
+    z-index: 30;
+    /* On top of everything to see it */
+    /* pointer-events: none; REMOVED to allow button clicks */
+}
+
+@keyframes gridScroll {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 0 30px;
+    }
+}
+
+#gameCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+#player-ship {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    /* Centers it initially */
+    width: 100px;
+    /* Adjusted size for smaller box */
+    height: 100px;
+
+    background-image: url('assets/ship.gif');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    z-index: 5;
+    /* Transition for rotation if we add it */
+    transition: transform 0.1s linear;
+}
+
+/* UI Styles (Scoped to game region) */
+.ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+    gap: 15px;
+}
+
+.wave-indicator {
+    position: absolute;
+    top: 10px;
+    color: #ff69b4;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-shadow: 0 0 5px #ff69b4;
+}
+
+.action-btn {
+    pointer-events: auto;
+    background: rgba(255, 20, 147, 0.8);
+    border: 2px solid white;
+    color: white;
+    padding: 10px 20px;
+    font-family: monospace;
+    cursor: pointer;
+    border-radius: 5px;
+    text-transform: uppercase;
+}
+
+.action-btn:hover {
+    background: #ff1493;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Modal */
+.modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* Align to top to prevent jumping */
+    padding-top: 15vh;
+    /* Push down a bit */
+    pointer-events: auto;
+}
+
+.modal-content {
+    color: #ffd1dc;
+    text-align: center;
+    width: 90%;
+    font-family: monospace;
+    /* Fixed height to prevent layout shifts */
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.fade-in {
+    animation: fadeIn 1s ease-in forwards;
+    opacity: 0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.report-line {
+    margin: 10px 0;
+    text-align: left;
+    font-size: 0.8rem;
+    width: 100%;
+    /* Ensure full width */
+    /* max-width: 380px; Removed max-width to let it fill */
+    display: flex;
+    flex-direction: column;
+    /* Stack vertically */
+    align-items: flex-start;
+    /* Align left */
+    margin-bottom: 20px;
+    /* Add space between blocks */
+}
+
+.word-span {
+    margin-right: 5px;
+    color: white;
+    display: inline-block;
+    position: relative;
+    white-space: nowrap;
+    /* Prevent wrapping changes */
+}
+
+/* Button styles now handled by .action-btn class */
+
+.rearranging {
+    color: #ff4d6d;
+    text-shadow: 0 0 8px red;
+    font-weight: bold;
+}
+
+#game-front {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+
+    background-image: url('assets/front.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    z-index: 20;
+    /* Higher z-index to stay on top */
+    pointer-events: none;
+    /* Let clicks pass through if needed */
+}
+
+/* Report Title Styling - Added to position at top */
+#reportTitle {
+    position: absolute;
+    top: 50px;
+    /* Positioned near top of game area */
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: #ff69b4;
+    font-family: 'Courier New', monospace;
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px #ff1493;
+    z-index: 40;
+    /* Above modal and everything else */
+    margin: 0;
+    pointer-events: none;
+}
+
+.elegant-reveal {
+    animation: revealAnim 2s ease-out forwards;
+}
+
+@keyframes revealAnim {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ===== START SCREEN STYLES ===== */
+#start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 9999;
+    /* Vignette Effect */
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.5) 100%), rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(8px);
+    animation: fadeInOverlay 1s ease-out forwards;
+}
+
+@keyframes fadeInOverlay {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOutOverlay {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.screen-exit {
+    animation: fadeOutOverlay 0.8s ease-out forwards !important;
+}
+
+/* Start Screen Animations */
+@keyframes slideDownIn {
+    from {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpIn {
+    from {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+}
+
+@keyframes slideDownOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
+
+.title-img {
+    max-width: 80%;
+    height: auto;
+    /* animation: slideDownIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; REMOVED for manual trigger */
+    opacity: 0;
+    /* Hidden initially */
+}
+
+.play-btn-img {
+    width: 200px;
+    height: auto;
+    cursor: pointer;
+    transition: transform 0.2s;
+    /* animation: slideUpIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; REMOVED for manual trigger */
+    opacity: 0;
+    /* Hidden initially */
+    pointer-events: auto;
+}
+
+.play-btn-img:hover {
+    transform: scale(1.1);
+}
+
+.title-exit {
+    animation: slideUpOut 0.8s cubic-bezier(0.5, 0, 0.75, 0) forwards !important;
+}
+
+.btn-exit {
+    animation: slideDownOut 0.8s cubic-bezier(0.5, 0, 0.75, 0) forwards !important;
+}
+
+/* Character Guide */
+.character-guide {
+    /* CONTROL VARIABLES START */
+    --char-width: 300px;
+    --char-height: auto;
+    --char-bottom: -10px;
+    --char-left: 0px;
+    /* CONTROL VARIABLES END */
+
+    position: fixed;
+    bottom: var(--char-bottom);
+    left: var(--char-left);
+    width: var(--char-width);
+    height: var(--char-height);
+    z-index: 100;
+    pointer-events: none;
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.character-guide.hidden {
+    display: block !important;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+}
+
+.character-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    transform: scaleX(-1);
+    /* Flip horizontally */
+}
+
+/* Text Bubble Image */
+#text-bubble {
+    /* CONTROL VARIABLES START */
+    --bubble-img-width: 300px;
+    --bubble-img-bottom: 350px;
+    /* Matched to Teddy Day update */
+    --bubble-img-left: 100px;
+    /* CONTROL VARIABLES END */
+
+    position: fixed;
+    bottom: var(--bubble-img-bottom);
+    left: var(--bubble-img-left);
+    width: var(--bubble-img-width);
+    height: auto;
+    z-index: 102;
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#text-bubble.hidden {
+    display: block !important;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+}
+
+/* --- Transition Overlay --- */
+#transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20000;
+    background: #ffb7c5;
+}
+
+#transition-overlay img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.overlay-fall {
+    animation: fallDownTransition 1.2s ease-in forwards;
+}
+
+@keyframes fallDownTransition {
+    to {
+        transform: translateY(100vh);
+    }
+}
+
+/* --- Manual Triggers --- */
+.anim-title-enter {
+    animation: slideDownIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.anim-btn-enter {
+    animation: slideUpIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Cursor Trail Canvas */
+#cursor-trail-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 10000;
+}

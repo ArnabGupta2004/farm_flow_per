@@ -1,0 +1,626 @@
+/* Chocolate Day Styles used Custom Assets */
+
+body {
+    background-color: #ffe5ec;
+    /* Light pink background */
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Base Layer Class for all sprites to ensure they don't stretch weirdly */
+.layer {
+    position: absolute;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* === Machine Back Control === */
+.machine-back {
+    /* CONTROL VARIABLES START */
+    --mb-width: auto;
+    /* Default: auto (natural) or specific px/% */
+    --mb-height: 100vh;
+    /* Default: 90% of viewport height to fit */
+    --mb-top: auto;
+    /* Default: centered via flex parent, or set px */
+    --mb-left: auto;
+    /* Default: centered via flex parent, or set px */
+    /* CONTROL VARIABLES END */
+
+    width: var(--mb-width);
+    height: var(--mb-height);
+    top: var(--mb-top);
+    left: var(--mb-left);
+
+    /* Ensure aspect ratio logic */
+    max-width: 100%;
+    max-height: 100vh;
+    object-fit: contain;
+    z-index: 1;
+    /* Layer 1 (Bottom) */
+}
+
+/* === Machine Front Control === */
+.machine-front {
+    /* CONTROL VARIABLES START */
+    --mf-width: auto;
+    --mf-height: 100vh;
+    /* Must match machine-back to align */
+    --mf-top: auto;
+    --mf-left: auto;
+    /* CONTROL VARIABLES END */
+
+    width: var(--mf-width);
+    height: var(--mf-height);
+    top: var(--mf-top);
+    left: var(--mf-left);
+
+    max-width: 100%;
+    max-height: 100vh;
+    object-fit: contain;
+    z-index: 100;
+    /* High Z-Index to stay on top of prizes/claw */
+}
+
+/* === The Claw === */
+.claw-container {
+    position: absolute;
+    top: 15%;
+    /* Start near top of machine area */
+    left: 50%;
+    /* Initial Horizontal Position */
+    transform: translateX(-50%);
+    width: 80px;
+    /* Adjust based on claw image size */
+    height: auto;
+    z-index: 50;
+    /* Between Back (1) and Front (100) */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.claw-rope {
+    width: 4px;
+    height: 100px;
+    /* Initial Length */
+    background: #333;
+    /* You can make this a repeating gradient for a "rope" look */
+    background: repeating-linear-gradient(45deg, #444, #444 5px, #222 5px, #222 10px);
+    transition: height 1s ease-in-out;
+}
+
+.claw-body {
+    position: relative;
+    width: 100%;
+    /* Container for the sprites */
+    display: flex;
+    justify-content: center;
+}
+
+.claw-sprite {
+    width: 100px;
+    /* Adjust based on actual image size */
+    height: auto;
+    filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.3));
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Animation States */
+.claw-container.dropping .claw-rope {
+    height: 450px;
+    /* Drop distance - ADJUST THIS based on prize depth */
+}
+
+/* === Controls === */
+.controls-layer {
+    position: absolute;
+    bottom: 13%;
+    /* Adjust based on where panel is on machine image */
+    left: 52%;
+    transform: translateX(-50%);
+    scale: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    /* Space between buttons */
+    z-index: 200;
+    /* Highest priority */
+}
+
+.control-btn {
+    cursor: pointer;
+    transition: transform 0.1s;
+    user-select: none;
+    pointer-events: auto;
+    /* Re-enable pointer events since layer disabled them */
+}
+
+/* Button Sizing & Adjustments */
+.left-btn,
+.right-btn {
+    width: 60px;
+    /* Adjust size as needed */
+    height: auto;
+}
+
+.red-btn {
+    width: 90px;
+    /* Bigger grabbing button */
+    height: auto;
+}
+
+/* Click Animation (Press Logic) */
+.control-btn:active {
+    transform: scale(0.9);
+    filter: brightness(0.9);
+}
+
+/* Red Button Glow */
+.red-btn:active {
+    filter: brightness(1.6) saturate(1.4);
+    transform: scale(0.9);
+    /* Match the other buttons' scale */
+}
+
+/* === Attempt Counter === */
+.attempt-counter {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, #d6336c, #ff6b9d);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 15px;
+    font-family: 'Love Ya Like A Sister', cursive;
+    font-size: 1.2rem;
+    font-weight: bold;
+    z-index: 300;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    user-select: none;
+}
+
+#attemptText {
+    color: #fff59d;
+    font-size: 1.3rem;
+}
+
+/* === Popup Modal === */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 500;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.popup-container {
+    background: linear-gradient(135deg, #ffe5ec, #ffc1cc);
+    border: 4px solid #d6336c;
+    border-radius: 30px;
+    padding: 40px;
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: scaleIn 0.4s ease-out;
+}
+
+.popup-title {
+    font-family: 'Emilys Candy', cursive;
+    font-size: 2.5rem;
+    color: #d6336c;
+    margin: 0 0 10px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.popup-subtitle {
+    font-family: 'Love Ya Like A Sister', cursive;
+    font-size: 1.5rem;
+    color: #8b2d54;
+    margin: 0 0 20px 0;
+}
+
+.prize-display {
+    margin: 20px 0;
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.prize-image {
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+    animation: bounce 0.6s ease-in-out;
+}
+
+.attempts-left {
+    font-family: 'Love Ya Like A Sister', cursive;
+    font-size: 1.2rem;
+    color: #d6336c;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.action-btn {
+    background: linear-gradient(135deg, #d6336c, #ff6b9d);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.3rem;
+    font-family: 'Love Ya Like A Sister', cursive;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(214, 51, 108, 0.4);
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(214, 51, 108, 0.6);
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+}
+
+/* === Final Summary Screen === */
+.final-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 600;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.final-container {
+    background: linear-gradient(135deg, #ffe5ec, #ffc1cc);
+    border: 4px solid #d6336c;
+    border-radius: 30px;
+    padding: 40px;
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: scaleIn 0.4s ease-out;
+}
+
+.final-title {
+    font-family: 'Emilys Candy', cursive;
+    font-size: 2.5rem;
+    color: #d6336c;
+    margin: 0 0 15px 0;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.final-message {
+    font-family: 'Love Ya Like A Sister', cursive;
+    font-size: 1.2rem;
+    color: #8b2d54;
+    margin: 0 0 25px 0;
+    font-style: italic;
+}
+
+.prizes-heading {
+    font-family: 'Love Ya Like A Sister', cursive;
+    font-size: 1.5rem;
+    color: #d6336c;
+    margin: 0 0 20px 0;
+    font-weight: bold;
+}
+
+.prizes-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin: 30px 0;
+}
+
+.final-prize {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.final-prize-img {
+    width: 100%;
+    max-width: 120px;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.calendar-btn {
+    background: linear-gradient(135deg, #d6336c, #ff6b9d);
+    color: white;
+    border: none;
+    padding: 18px 50px;
+    font-size: 1.4rem;
+    font-family: 'Love Ya Like A Sister', cursive;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(214, 51, 108, 0.4);
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.calendar-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(214, 51, 108, 0.6);
+}
+
+.calendar-btn:active {
+    transform: scale(0.95);
+}
+
+/* === Animations === */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+    .popup-container {
+        padding: 30px 20px;
+    }
+
+    .popup-title {
+        font-size: 2rem;
+    }
+
+    .final-container {
+        padding: 30px 20px;
+    }
+
+    .final-title {
+        font-size: 2rem;
+    }
+
+    .final-message {
+        font-size: 1rem;
+    }
+
+    .prizes-heading {
+        font-size: 1.2rem;
+    }
+
+    .prizes-grid {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .final-prize-img {
+        max-width: 100px;
+    }
+
+    .attempt-counter {
+        font-size: 1rem;
+        padding: 10px 15px;
+    }
+}
+
+/* ===== START SCREEN STYLES ===== */
+#start-screen {
+    gap: 20px;
+    /* Vignette Effect */
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.5) 100%), rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(8px);
+    animation: fadeInOverlay 1s ease-out forwards;
+}
+
+@keyframes fadeInOverlay {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOutOverlay {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.screen-exit {
+    animation: fadeOutOverlay 0.8s ease-out forwards !important;
+}
+
+/* Start Screen Animations */
+@keyframes slideDownIn {
+    from {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpIn {
+    from {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+}
+
+@keyframes slideDownOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
+
+.title-img {
+    max-width: 80%;
+    height: auto;
+    /* animation: slideDownIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; REMOVED for manual trigger */
+    opacity: 0;
+    /* Hidden initially */
+}
+
+.play-btn-img {
+    width: 200px;
+    height: auto;
+    cursor: pointer;
+    transition: transform 0.2s;
+    /* animation: slideUpIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; REMOVED for manual trigger */
+    opacity: 0;
+    /* Hidden initially */
+}
+
+.play-btn-img:hover {
+    transform: scale(1.1);
+}
+
+@keyframes fadeOutOverlay {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.title-exit {
+    animation: slideUpOut 0.8s cubic-bezier(0.5, 0, 0.75, 0) forwards !important;
+}
+
+.btn-exit {
+    animation: slideDownOut 0.8s cubic-bezier(0.5, 0, 0.75, 0) forwards !important;
+}
+
+.screen-exit {
+    animation: fadeOutOverlay 0.8s ease-out forwards !important;
+}
+
+/* --- Transition Overlay --- */
+#transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20000;
+    background: #ffb7c5;
+}
+
+#transition-overlay img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.overlay-fall {
+    animation: fallDownTransition 1.2s ease-in forwards;
+}
+
+@keyframes fallDownTransition {
+    to {
+        transform: translateY(100vh);
+    }
+}
+
+/* --- Manual Triggers --- */
+.anim-title-enter {
+    animation: slideDownIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.anim-btn-enter {
+    animation: slideUpIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}

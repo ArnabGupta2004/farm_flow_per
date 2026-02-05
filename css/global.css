@@ -1,0 +1,253 @@
+/* Global Variables */
+:root {
+    --primary-color: #ffb7c5;
+    /* Soft Pink */
+    --secondary-color: #ff6b81;
+    /* Darker Pink/Red */
+    --accent-color: #ffffff;
+    --text-color: #d63384;
+    --bg-color: #FFDBF5;
+    /* Updated Background */
+
+    --font-heading: 'Emilys Candy', 'Noto Color Emoji', cursive;
+    --font-body: 'Love Ya Like A Sister', 'Noto Color Emoji', cursive;
+    --font-emoji: 'Noto Color Emoji', sans-serif;
+}
+
+/* Access Control Modal Styles */
+.ac-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+.ac-modal-box {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    border: 4px solid var(--secondary-color);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transform: scale(0.8);
+    animation: popIn 0.3s forwards;
+    font-family: var(--font-body);
+}
+
+.ac-modal-box p {
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+}
+
+.ac-modal-btn {
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    font-size: 1.2rem;
+    border-radius: 15px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: background 0.2s;
+}
+
+.ac-modal-btn:hover {
+    background: #ff1493;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes popIn {
+    to {
+        transform: scale(1);
+    }
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+    min-height: 100vh;
+    cursor: url('../assets/BODAMOR_english/normal.cur'), auto;
+}
+
+h1,
+h2,
+h3 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Utilities */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--secondary-color);
+    color: white;
+    border-radius: 20px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    cursor: url('../assets/BODAMOR_english/link.cur'), pointer !important;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    background-color: #ff4757;
+    cursor: url('../assets/BODAMOR_english/link.cur'), pointer !important;
+}
+
+/* Custom cursor for all interactive elements */
+a,
+button,
+input[type="submit"],
+input[type="button"],
+.clickable,
+[onclick] {
+    cursor: url('../assets/BODAMOR_english/link.cur'), pointer !important;
+}
+
+a:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover {
+    cursor: url('../assets/BODAMOR_english/link.cur'), pointer !important;
+}
+
+/* Text input cursor */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea {
+    cursor: url('../assets/BODAMOR_english/text.cur'), text !important;
+}
+
+/* Help cursor */
+[title]:hover {
+    cursor: url('../assets/BODAMOR_english/help.cur'), help !important;
+}
+
+/* Universal cursor override - catches everything */
+* {
+    cursor: url('../assets/BODAMOR_english/normal.cur'), auto !important;
+}
+
+/* Override for anything that should be a pointer */
+a,
+a *,
+button,
+button *,
+input[type="submit"],
+input[type="submit"] *,
+input[type="button"],
+input[type="button"] *,
+input[type="checkbox"],
+input[type="radio"],
+select,
+label,
+.btn,
+.btn *,
+.clickable,
+.clickable *,
+[onclick],
+[onclick] *,
+[role="button"],
+summary,
+.puzzle-piece {
+    cursor: url('../assets/BODAMOR_english/link.cur'), pointer !important;
+}
+
+/* Cursor Trail Canvas */
+#cursor-trail-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    touch-action: none;
+}
+
+/* --- Common UI (Start Screen, Popups) --- */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(5px);
+    pointer-events: auto;
+    z-index: 10000;
+    /* High z-index to block interaction */
+}
+
+/* Start Screen specific */
+#start-screen {
+    /* Ensure it's on top */
+}
+
+.title {
+    font-family: 'Emilys Candy', cursive;
+    font-size: 4rem;
+    color: #ff3366;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px white;
+    text-align: center;
+}
+
+.subtitle {
+    font-family: var(--font-body);
+    font-size: 1.5rem;
+    color: #444;
+    margin-bottom: 30px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 10px 20px;
+    border-radius: 20px;
+}
+
+.hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}

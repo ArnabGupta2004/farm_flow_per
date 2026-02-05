@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propose Day - 8 Feb 💍</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Emilys+Candy&family=Love+Ya+Like+A+Sister&family=Noto+Color+Emoji&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="propose.css">
+
+    <!-- Preload Transition Image -->
+    <link rel="preload" href="../assets/images/decorations/home_page.jpg" as="image">
+
+    <!-- Critical CSS to prevent white flash -->
+    <style>
+        html,
+        body {
+            background-color: #ffb7c5 !important;
+            /* Match overlay color - !important to override external CSS */
+        }
+
+        #transition-overlay {
+            display: block !important;
+            /* Force display */
+            background: #ffb7c5 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Cursor Trail Canvas -->
+    <canvas id="cursor-trail-canvas"></canvas>
+
+    <!-- Transition Overlay -->
+    <div id="transition-overlay">
+        <img src="../assets/images/decorations/home_page.jpg" alt="Loading">
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="screen">
+        <img src="assets/title.png" alt="Propose Day" class="title-img" id="start-title">
+        <img src="assets/Play.png" alt="Play Game" class="play-btn-img" id="start-btn">
+    </div>
+
+    <div class="container" id="propose-container">
+        <!-- Asset: b.png (Background) -->
+        <img src="assets/b.png" id="background-asset" alt="Room Background" class="game-asset">
+        <!-- Asset: text.png (Text Overlay) -->
+        <img src="assets/text.png" id="text-asset" alt="Proposal Text" class="game-asset">
+        <!-- Asset: arn_flirt.png (Character) -->
+        <img src="../assets/images/character/arn_flirt.png" id="character-asset" alt="Flirting Character"
+            class="game-asset">
+        <!-- Asset: room.png (Room Overlay) -->
+        <img src="assets/room.png" id="room-asset" alt="Pink Room" class="game-asset">
+
+        <!-- Asset: yes_btn.png (Yes Button) -->
+        <img src="assets/yes_btn.png" id="yes-btn" alt="Yes Button" class="game-asset interactive-btn">
+        <!-- Asset: no_btn.png (No Button) -->
+        <img src="assets/no_btn.png" id="no-btn" alt="No Button" class="game-asset interactive-btn">
+
+        <!-- Success Popup -->
+        <div id="success-popup" class="popup-overlay">
+            <div class="popup-container">
+                <div class="popup-left">
+                    <h1 class="popup-title">Happy Propose Day!</h1>
+                    <p class="popup-message">
+                        I knew you'd say yes! You've made this day special, and I can't wait to celebrate every moment
+                        with you. Let's make beautiful memories together!
+                    </p>
+                    <button id="calendar-btn" class="calendar-button">Go to Calendar</button>
+                </div>
+                <div class="popup-right">
+                    <img src="../assets/images/character/arn_flirt.png" alt="Character" class="popup-character">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../js/access-control.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="propose.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => { AccessControl.redirectIfLocked('02-08'); });
+        function goBack() { window.location.href = '../index.html' + (AccessControl.isDeveloperMode() ? '?dev=true' : ''); }
+    </script>
+
+    <!-- Cursor Trail Effect -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.6.2/pixi.min.js'></script>
+    <script src='https://unpkg.com/pixi-particles@2.1.9'></script>
+    <script src="../js/cursor-trail.js"></script>
+</body>
+
+</html>

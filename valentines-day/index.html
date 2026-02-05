@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day - 14 Feb 💖</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Emilys+Candy&family=Love+Ya+Like+A+Sister&family=Noto+Color+Emoji&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="valentines.css">
+
+    <!-- Preload Transition Image -->
+    <link rel="preload" href="../assets/images/decorations/home_page.jpg" as="image">
+
+    <!-- Critical CSS to prevent white flash -->
+    <style>
+        body {
+            background-color: #ffb7c5;
+            /* Match overlay color */
+        }
+
+        #transition-overlay {
+            display: block !important;
+            /* Force display */
+            background: #ffb7c5;
+        }
+    </style>
+    <!-- Preload puzzle images -->
+    <link rel="preload" href="assets/us.png" as="image">
+    <link rel="preload" href="assets/us2.png" as="image">
+    <link rel="preload" href="assets/us3.png" as="image">
+</head>
+
+<body>
+    <!-- Cursor Trail Canvas -->
+    <canvas id="cursor-trail-canvas"></canvas>
+
+    <!-- Cursor Trail Canvas -->
+    <canvas id="cursor-trail-canvas"></canvas>
+
+    <!-- Transition Overlay -->
+    <div id="transition-overlay">
+        <img src="../assets/images/decorations/home_page.jpg" alt="Loading">
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="screen">
+        <img src="assets/title.png" alt="Happy Valentine's Day" class="title-img" id="start-title">
+        <img src="assets/Play.png" alt="Play Game" class="play-btn-img" id="start-btn">
+    </div>
+
+    <div class="container" id="main-container">
+        <!-- Title -->
+
+        <p class="subtitle">Complete the puzzles...</p>
+
+        <!-- Three Puzzles Container -->
+        <div id="puzzles-container">
+            <!-- Puzzle 1 -->
+            <div class="puzzle-wrapper">
+                <div class="puzzle-flipper">
+                    <div class="puzzle-front">
+                        <div id="puzzle-grid-1" class="puzzle-grid" data-puzzle="1"></div>
+                    </div>
+                    <div class="puzzle-back">
+                        <div class="back-text">Happy</div>
+                    </div>
+                </div>
+                <p class="hint-text" data-puzzle="1">Tap pieces to rotate!</p>
+            </div>
+
+            <!-- Puzzle 2 -->
+            <div class="puzzle-wrapper">
+                <div class="puzzle-flipper">
+                    <div class="puzzle-front">
+                        <div id="puzzle-grid-2" class="puzzle-grid" data-puzzle="2"></div>
+                    </div>
+                    <div class="puzzle-back">
+                        <div class="back-text">Valentine's</div>
+                    </div>
+                </div>
+                <p class="hint-text" data-puzzle="2">Tap pieces to rotate!</p>
+            </div>
+
+            <!-- Puzzle 3 -->
+            <div class="puzzle-wrapper">
+                <div class="puzzle-flipper">
+                    <div class="puzzle-front">
+                        <div id="puzzle-grid-3" class="puzzle-grid" data-puzzle="3"></div>
+                    </div>
+                    <div class="puzzle-back">
+                        <div class="back-text">Day</div>
+                    </div>
+                </div>
+                <p class="hint-text" data-puzzle="3">Tap pieces to rotate!</p>
+            </div>
+        </div>
+    </div>
+    <script src="../js/access-control.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="valentines.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => { AccessControl.redirectIfLocked('02-14'); });
+        function goBack() { window.location.href = '../index.html' + (AccessControl.isDeveloperMode() ? '?dev=true' : ''); }
+    </script>
+
+    <!-- Video Outro Overlay -->
+    <div id="video-overlay" class="hidden">
+        <video id="outro-video" playsinline preload="auto">
+            <source src="assets/Heart Text optimised.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Final Outro Screen -->
+    <div id="outro-screen" class="hidden">
+        <h1 class="outro-text">Thank you for being a part of my life ❤️</h1>
+        <button class="btn outro-btn" onclick="goBack()">Go to Calendar</button>
+    </div>
+
+    <!-- Cursor Trail Effect -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.6.2/pixi.min.js'></script>
+    <script src='https://unpkg.com/pixi-particles@2.1.9'></script>
+    <script src="../js/cursor-trail.js"></script>
+</body>
+
+</html>

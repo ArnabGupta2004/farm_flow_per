@@ -1,0 +1,450 @@
+/* Global Setup */
+:root {
+    /* --- ASSET CONTROL VARIABLES --- */
+    /* Boy (Intro) */
+    --boy-size: 500px;
+    --boy-x: 40px;
+    /* Distance from left */
+    --boy-y: bottom;
+    /* 'center' or pixel offset from top */
+
+    /* Girl (Outro) */
+    --girl-size: 500px;
+    --girl-right: 50px;
+    /* Distance from right */
+    --girl-y: bottom;
+    /* 'center' or pixel offset from top */
+
+    /* Player Heart */
+    --heart-size: 60px;
+    --heart-intro-size: 60px;
+    --heart-intro-x-offset: 80px;
+    /* Fixed typo */
+    --heart-intro-y-offset: -20px;
+    /* New: Offset from Boy Y top 1/3 */
+
+    /* Obstacles (Clouds) */
+    --cloud-size: 100%;
+}
+
+body,
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #FFB7B2;
+    /* Fallback soft pink */
+    font-family: 'Love Ya Like A Sister', cursive;
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* UI Layer */
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* Let clicks pass to canvas when no UI is active */
+}
+
+/* Screens (Start, Game Over) */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(5px);
+    pointer-events: auto;
+    z-index: 10;
+}
+
+.title {
+    font-family: 'Emilys Candy', cursive;
+    font-size: 4rem;
+    color: #ff3366;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px white;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    color: #444;
+    margin-bottom: 30px;
+}
+
+.btn {
+    padding: 15px 40px;
+    font-size: 1.5rem;
+    background: #ff3366;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Love Ya Like A Sister', cursive;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 5px 15px rgba(255, 51, 102, 0.4);
+}
+
+.btn:hover {
+    transform: scale(1.1);
+    background: #ff0040;
+}
+
+/* HUD */
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+}
+
+.progress-container {
+    width: 300px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    overflow: visible;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+/* Destination Flag */
+.progress-container::after {
+    content: '🚩';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translate(100%, -50%);
+    font-size: 24px;
+    font-family: 'Noto Color Emoji', sans-serif;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+#progress-bar {
+    width: 0%;
+    height: 100%;
+    background: #ff3366;
+    transition: width 0.1s linear;
+
+}
+
+.controls-hint {
+    color: white;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.2);
+    padding: 5px 15px;
+    border-radius: 20px;
+}
+
+.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none !important;
+    transition: opacity 0.5s ease;
+}
+
+/* Win Popup (Match Hug Day / Propose Day Styles) */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+    pointer-events: auto;
+}
+
+.popup-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popup-container {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(255, 105, 180, 0.4);
+    display: flex;
+    max-width: 800px;
+    width: 90%;
+    overflow: hidden;
+    transform: scale(0.8);
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.popup-overlay.show .popup-container {
+    transform: scale(1);
+}
+
+.popup-left {
+    width: 60%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.popup-title {
+    font-family: 'Emilys Candy', cursive;
+    font-size: 2.5em;
+    color: #ff0000;
+    margin: 0 0 20px 0;
+    text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.5);
+}
+
+.popup-message {
+    font-size: 1.2em;
+    color: #333;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.popup-right {
+    width: 40%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.popup-character {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom;
+}
+
+.calendar-button {
+    font-family: 'Love Ya Like A Sister', cursive;
+    background: #ff3366;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.calendar-button:hover {
+    transform: scale(1.05);
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .popup-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .popup-left,
+    .popup-right {
+        width: 100%;
+        padding: 20px;
+        overflow: hidden;
+    }
+
+    .popup-character {
+        max-height: 200px;
+    }
+
+    .title {
+        font-size: 2.5rem;
+        text-align: center;
+    }
+}
+
+/* ===== START SCREEN STYLES ===== */
+#start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 9999;
+    /* Vignette Effect */
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.5) 100%), rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(8px);
+    animation: fadeInOverlay 1s ease-out forwards;
+}
+
+@keyframes fadeInOverlay {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOutOverlay {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.screen-exit {
+    animation: fadeOutOverlay 0.8s ease-out forwards !important;
+}
+
+/* Start Screen Animations */
+@keyframes slideDownIn {
+    from {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpIn {
+    from {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+}
+
+@keyframes slideDownOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
+
+.title-img {
+    max-width: 80%;
+    height: auto;
+    /* animation: slideDownIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; REMOVED for manual trigger */
+    opacity: 0;
+    /* Hidden initially */
+}
+
+.play-btn-img {
+    width: 200px;
+    height: auto;
+    cursor: pointer;
+    transition: transform 0.2s;
+    /* animation: slideUpIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; REMOVED for manual trigger */
+    opacity: 0;
+    /* Hidden initially */
+}
+
+.play-btn-img:hover {
+    transform: scale(1.1);
+}
+
+.title-exit {
+    animation: slideUpOut 0.8s cubic-bezier(0.5, 0, 0.75, 0) forwards !important;
+}
+
+.btn-exit {
+    animation: slideDownOut 0.8s cubic-bezier(0.5, 0, 0.75, 0) forwards !important;
+}
+
+/* --- Transition Overlay --- */
+#transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20000;
+    background: #ffb7c5;
+}
+
+#transition-overlay img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.overlay-fall {
+    animation: fallDownTransition 1.2s ease-in forwards;
+}
+
+@keyframes fallDownTransition {
+    to {
+        transform: translateY(100vh);
+    }
+}
+
+/* --- Manual Triggers --- */
+.anim-title-enter {
+    animation: slideDownIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.anim-btn-enter {
+    animation: slideUpIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}

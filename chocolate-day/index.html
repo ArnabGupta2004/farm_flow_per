@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chocolate Day - 9 Feb 🍫</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Emilys+Candy&family=Love+Ya+Like+A+Sister&display=swap"
+        rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="chocolate.css">
+
+    <!-- Preload Transition Image -->
+    <link rel="preload" href="../assets/images/decorations/home_page.jpg" as="image">
+
+    <!-- Critical CSS to prevent white flash -->
+    <style>
+        body {
+            background-color: #ffb7c5;
+            /* Match overlay color */
+        }
+
+        #transition-overlay {
+            display: block !important;
+            /* Force display */
+            background: #ffb7c5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Cursor Trail Canvas -->
+    <canvas id="cursor-trail-canvas"></canvas>
+
+    <!-- Transition Overlay -->
+    <div id="transition-overlay">
+        <img src="../assets/images/decorations/home_page.jpg" alt="Loading">
+    </div>
+
+    <!-- Start Screen -->
+    <!-- Start Screen -->
+    <div id="start-screen" class="screen">
+        <img src="assets/title.png" alt="Chocolate Day" class="title-img" id="start-title">
+        <img src="assets/Play.png" alt="Play Game" class="play-btn-img" id="start-btn">
+    </div>
+
+    <div class="game-container">
+        <!-- 1. Machine Back -->
+        <img src="assets/machine b.png" alt="Machine Back" class="layer machine-back">
+
+        <!-- 2. The Claw (Z-Index Middle) -->
+        <div id="clawContainer" class="claw-container">
+            <div class="claw-rope"></div>
+            <div class="claw-body">
+                <img src="assets/claw_open2.png" alt="Claw Open" class="claw-sprite claw-open">
+                <img src="assets/claw_closed2.png" alt="Claw Closed" class="claw-sprite claw-closed hidden">
+            </div>
+        </div>
+
+        <!-- 3. Machine Front (Z-Index Higher) -->
+        <img src="assets/machine f2.png" alt="Machine Front" class="layer machine-front">
+
+        <!-- 4. Controls (Highest Layer) -->
+        <div class="controls-layer">
+            <img src="assets/left_button.png" alt="Left" id="btnLeft" class="control-btn left-btn">
+            <img src="assets/red_button.png" alt="Grab" id="btnGrab" class="control-btn red-btn">
+            <img src="assets/right_button.png" alt="Right" id="btnRight" class="control-btn right-btn">
+        </div>
+
+        <!-- Other assets will go here -->
+    </div>
+
+    <!-- Attempt Counter -->
+    <div id="attemptCounter" class="attempt-counter">
+        Attempts: <span id="attemptText">1/3</span>
+    </div>
+
+    <!-- Prize Popup Modal -->
+    <div id="prizePopup" class="popup-overlay hidden">
+        <div class="popup-container">
+            <h1 id="popupTitle" class="popup-title">Congratulations!!</h1>
+            <p id="popupSubtitle" class="popup-subtitle">You Got</p>
+            <div class="prize-display">
+                <img id="prizeImage" src="" alt="Prize" class="prize-image">
+            </div>
+            <p id="attemptsLeft" class="attempts-left">Attempts Left: 2</p>
+            <button id="actionBtn" class="action-btn">Go Again</button>
+        </div>
+    </div>
+
+    <!-- Final Summary Screen -->
+    <div id="finalSummary" class="final-overlay hidden">
+        <div class="final-container">
+            <h1 class="final-title">Happy Chocolate Day!</h1>
+            <p class="final-message">Sweet moments, sweet memories, sweet you!</p>
+            <h2 class="prizes-heading">Your Prizes</h2>
+            <div class="prizes-grid">
+                <div class="final-prize">
+                    <img id="finalPrize1" src="" alt="Prize 1" class="final-prize-img">
+                </div>
+                <div class="final-prize">
+                    <img id="finalPrize2" src="" alt="Prize 2" class="final-prize-img">
+                </div>
+                <div class="final-prize">
+                    <img id="finalPrize3" src="" alt="Prize 3" class="final-prize-img">
+                </div>
+            </div>
+            <button id="calendarBtn" class="calendar-btn">Go to Calendar</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/access-control.js"></script>
+    <script src="chocolate.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // AccessControl.redirectIfLocked('02-09');
+        });
+    </script>
+
+    <!-- Cursor Trail Effect -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.6.2/pixi.min.js'></script>
+    <script src='https://unpkg.com/pixi-particles@2.1.9'></script>
+    <script src="../js/cursor-trail.js"></script>
+</body>
+
+</html>

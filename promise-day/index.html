@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise Day - 11 Feb</title>
+    <link rel="stylesheet" href="promise.css">
+
+    <!-- Preload Transition Image -->
+    <link rel="preload" href="../assets/images/decorations/home_page.jpg" as="image">
+
+    <!-- Critical CSS to prevent white flash -->
+    <style>
+        body {
+            background-color: #ffb7c5;
+            /* Match overlay color */
+        }
+
+        #transition-overlay {
+            display: block !important;
+            /* Force display */
+            background: #ffb7c5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Cursor Trail Canvas -->
+    <canvas id="cursor-trail-canvas"></canvas>
+
+    <!-- Transition Overlay -->
+    <div id="transition-overlay">
+        <img src="../assets/images/decorations/home_page.jpg" alt="Loading">
+    </div>
+
+    <!-- Start Screen (Full Page Overlay) -->
+    <div id="start-screen" class="screen">
+        <img src="assets/title.png" alt="Promise Day" class="title-img" id="start-title">
+        <img src="assets/Play.png" alt="Play Game" class="play-btn-img" id="start-btn">
+    </div>
+
+    <!-- Gameplay Region -->
+    <div id="game-area">
+        <canvas id="gameCanvas"></canvas>
+        <div id="player-ship"></div>
+
+        <!-- UI Elements -->
+        <div class="ui-layer">
+            <div class="wave-indicator">Wave <span id="waveNum">1</span>/3</div>
+            <div id="nextWaveBtn" class="action-btn hidden">Begin Next Wave</div>
+            <div id="reportBtn" class="action-btn hidden">Get Mission Report</div>
+        </div>
+
+        <div id="missionModal" class="modal hidden">
+            <div class="modal-content">
+                <div id="reportContainer"></div>
+                <!-- Buttons are here -->
+                <button id="revealBtn" class="action-btn hidden" style="margin-top: 15px;">Reveal Secret</button>
+                <button id="calendarBtn" class="action-btn hidden" style="margin-top: 15px;">Go to Calendar</button>
+            </div>
+        </div>
+
+        <!-- Title Layer -->
+        <h2 id="reportTitle" class="hidden">Happy Promise Day</h2>
+    </div>
+
+    <!-- Foreground Element -->
+    <div id="game-front"></div>
+
+    <!-- Character Guide -->
+    <div class="character-guide hidden" id="character-guide">
+        <img src="../assets/images/character/arn_point.png" alt="Guide Character" class="character-img">
+    </div>
+
+    <!-- Text Bubble Image -->
+    <img id="text-bubble" src="assets/text_bubble.png" class="hidden" alt="Text Bubble">
+
+    <!-- Global Title Overlay -->
+
+
+    <script src="promise.js"></script>
+
+    <!-- Cursor Trail Effect -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.6.2/pixi.min.js'></script>
+    <script src='https://unpkg.com/pixi-particles@2.1.9'></script>
+    <script src="../js/cursor-trail.js"></script>
+</body>
+
+</html>
