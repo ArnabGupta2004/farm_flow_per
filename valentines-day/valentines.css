@@ -636,6 +636,25 @@ body {
 
     /* Ensure it doesn't overflow */
     object-fit: contain;
+
+    /* Memory Fade Animation */
+    opacity: 0;
+    animation: memoryFade 3s ease-out forwards;
+    /* Removed delay to sync with text */
+}
+
+@keyframes memoryFade {
+    0% {
+        opacity: 0;
+        transform: rotate(90deg) scale(1.15);
+        filter: blur(8px) brightness(1.2);
+    }
+
+    100% {
+        opacity: 1;
+        transform: rotate(90deg) scale(1);
+        filter: blur(0) brightness(1);
+    }
 }
 
 .outro-text {

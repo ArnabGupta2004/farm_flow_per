@@ -231,6 +231,7 @@ body.shake {
     line-height: 1.6;
     margin: 0 0 30px 0;
     text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.3);
+    text-align: center;
 }
 
 .calendar-button {
@@ -266,12 +267,11 @@ body.shake {
 }
 
 .popup-character {
-    width: 100%;
+    width: 80%;
     height: auto;
     max-width: 300px;
     object-fit: contain;
     image-rendering: pixelated;
-    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
 }
 
 /* Responsive Design */
@@ -298,6 +298,6 @@ body.shake {
     }
 
     .popup-character {
-        max-width: 200px;
+        max-width: 170px;
     }
 }

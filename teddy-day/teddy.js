@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="popup-container">
                 <div class="popup-left">
                     <h2 class="popup-title">Happy Teddy Day!</h2>
-                    <p class="popup-message">“This teddy ran through everything just to reach you.”</p>
+                    <p class="popup-message">He crossed a whole world of miles to deliver this little moment of comfort.</p>
                     <button id="calendar-btn" class="calendar-button">Go to Calendar</button>
                 </div>
                 <div class="popup-right">
