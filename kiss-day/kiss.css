@@ -218,7 +218,10 @@ html {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
+    /* Centered alignment */
+    text-align: center;
+    /* Centered text */
 }
 
 .popup-title {
@@ -226,7 +229,6 @@ html {
     font-size: 2.5em;
     color: #ff0000;
     margin: 0 0 20px 0;
-    text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.5);
 }
 
 .popup-message {
@@ -241,6 +243,8 @@ html {
     display: flex;
     align-items: flex-end;
     justify-content: center;
+    padding-right: 50px;
+    /* Add some space from right edge */
 }
 
 .popup-character {

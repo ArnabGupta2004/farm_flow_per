@@ -333,22 +333,20 @@
         });
 
         function handleDayClick(dateStr, folderName) {
-            if (AccessControl.isDateAllowed(dateStr)) {
+            AccessControl.promptPassword(folderName, () => {
                 // Exit Animations
                 const hero = document.querySelector('.hero');
                 const calendarBox = document.querySelector('.calendar-anim-box');
 
-                hero.classList.add('anim-exit-top');
-                calendarBox.classList.add('anim-exit-bottom');
+                if (hero) hero.classList.add('anim-exit-top');
+                if (calendarBox) calendarBox.classList.add('anim-exit-bottom');
 
                 // Wait for animation
                 setTimeout(() => {
                     const devParam = AccessControl.isDeveloperMode() ? '?dev=true' : '';
                     window.location.href = `${folderName}/index.html${devParam}`;
                 }, 800);
-            } else {
-                AccessControl.handleLocked(); // Show Modal
-            }
+            });
         }
     </script>
 

@@ -203,11 +203,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show Popup
         setTimeout(() => {
             const popup = document.getElementById('celebration-popup');
-            popup.classList.remove('hidden');
-            // Force reflow
-            void popup.offsetWidth;
-            popup.classList.add('visible');
-        }, 6000); // USER: 5s delay after bloom (1s) = 6s total
+            if (popup) {
+                // Force reflow
+                void popup.offsetWidth;
+                popup.classList.add('show');
+            }
+        }, 6000); // 5s delay after bloom (1s) = 6s total
     }
 
     function startPetalRain() {

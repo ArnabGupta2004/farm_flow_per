@@ -265,30 +265,37 @@ function showFinalScreen() {
     // Show final screen
     if (outroScreen) {
         outroScreen.classList.remove('hidden');
+
+        // Play the new video
+        const finalVideo = document.getElementById('final-video');
+        if (finalVideo) {
+            finalVideo.play().catch(e => console.log("Final video autoplay prevented:", e));
+        }
     }
 
-    // Typewriter Logic
+    // New Word-by-Word Animation Logic
     if (outroText && outroBtn) {
         const text = "Thank you for being a part of my life ❤️";
         outroText.textContent = ""; // Clear initial text
 
-        let i = 0;
-        function typeWriter() {
-            if (i < text.length) {
-                outroText.textContent += text.charAt(i);
-                i++;
-                setTimeout(typeWriter, 100); // Typing speed
-            } else {
-                // Done typing
-                outroText.classList.add('typing-done');
-                // Show button
-                setTimeout(() => {
-                    outroBtn.classList.add('visible');
-                }, 500);
-            }
-        }
+        // Split into words
+        const words = text.split(' ');
 
-        // Start typing after a short delay
-        setTimeout(typeWriter, 1000);
+        words.forEach((word, index) => {
+            const span = document.createElement('span');
+            span.textContent = word;
+            span.className = 'word-fade';
+            // Stagger animation: 0s, 0.3s, 0.6s...
+            span.style.animationDelay = `${index * 0.3}s`;
+            outroText.appendChild(span);
+        });
+
+        // Show button after all words have started fading in
+        // Total time = (words.length - 1) * 0.3s + 0.8s (animation duration)
+        const totalDuration = (words.length * 300) + 500;
+
+        setTimeout(() => {
+            outroBtn.classList.add('visible');
+        }, totalDuration);
     }
 }
