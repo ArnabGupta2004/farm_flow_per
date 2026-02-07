@@ -32,6 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (startBtn) startBtn.classList.add('anim-btn-enter');
     }
 
+    const remoteControl = document.getElementById('remote-control');
+    const guideCharacter = document.getElementById('minigame-guide');
+    const textBubble = document.getElementById('text-bubble');
+
     // Initialize - wait for Start Click
     startBtn.addEventListener('click', () => {
         // Exit animations for start screen
@@ -43,35 +47,163 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             startScreen.classList.add('hidden');
 
-            // Start page animations sequence
-            // 1. Background TV glitch (starts at 0.2s delay like original)
-            setTimeout(() => {
-                backgroundAsset.style.animation = 'crtPowerOn 0.6s ease-out forwards';
-            }, 200);
+            // NEW FLOW: Show Remote Control AND Guide Character
+            remoteControl.classList.add('remote-slide-up');
+            if (guideCharacter) guideCharacter.classList.remove('hidden');
 
-            // 2. Text TV glitch + floating (starts at 0.5s delay like original)
+            // Show Text Bubble after a short delay (e.g., 500ms after character)
             setTimeout(() => {
-                textAsset.style.animation = 'crtPowerOn 0.6s ease-out forwards 0s, floating 3s ease-in-out infinite 0.6s';
+                if (textBubble) textBubble.classList.remove('hidden');
             }, 500);
 
-            // 3. Character slide in (starts at 0.8s delay like original)
-            setTimeout(() => {
-                characterAsset.classList.add('intro-animation');
-
-                // Switch to floating after intro finishes
-                setTimeout(() => {
-                    characterAsset.classList.remove('intro-animation');
-                    characterAsset.classList.add('floating-animation');
-                }, 1000); // Duration of slideInRight
-            }, 800);
-
-            // 4. Buttons slide up (starts at 2s delay like original)
-            setTimeout(() => {
-                yesBtn.style.animation = 'slideUpBtn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards';
-                noBtn.style.animation = 'slideUpBtn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards';
-            }, 2000);
         }, 800); // Match start screen exit duration
     });
+
+    // Remote Control Interaction
+    let remoteClicked = false; // Flag to prevent multiple clicks
+    if (remoteControl) {
+        remoteControl.addEventListener('click', () => {
+            if (remoteClicked) return; // Prevent multiple clicks
+            remoteClicked = true;
+
+            // 1. Slide down remote
+            remoteControl.classList.remove('remote-slide-up');
+            remoteControl.classList.add('remote-slide-down');
+
+            // 2. Start TV Mini-game (after remote starts sliding down)
+            setTimeout(() => {
+                startTVMiniGame();
+            }, 500);
+
+            // 3. Switch Character & Bubble Assets (1s later)
+            setTimeout(() => {
+                const charImg = guideCharacter.querySelector('.character-img');
+                if (charImg) charImg.src = '../assets/images/character/arn_think.png';
+
+                if (textBubble) textBubble.src = 'assets/text_bubble_2.png';
+            }, 1000);
+        });
+    }
+
+    // ========== TV HIT MINI-GAME ==========
+    const staticAsset = document.getElementById('static-asset');
+    const signalBarContainer = document.getElementById('signal-bar-container');
+    const signalBarFill = document.getElementById('signal-bar-fill');
+
+    let signalLevel = 0;
+    let isGameActive = false;
+    let depleteInterval = null;
+    const FILL_AMOUNT = 6; // % per click
+    const DEPLETE_AMOUNT = 2; // % per 100ms
+    const DEPLETE_INTERVAL = 100; // ms
+
+    function startTVMiniGame() {
+        isGameActive = true;
+
+        // Show static with crtPowerOn animation
+        staticAsset.style.animation = 'crtPowerOn 0.6s ease-out forwards';
+
+        // Show signal bar after static appears and allow opacity control
+        setTimeout(() => {
+            staticAsset.style.animation = 'none'; // Remove animation to allow opacity control
+            staticAsset.style.opacity = '1';
+            signalBarContainer.style.display = 'flex';
+        }, 600);
+
+        // Start depletion timer
+        depleteInterval = setInterval(() => {
+            if (signalLevel > 0) {
+                signalLevel = Math.max(0, signalLevel - DEPLETE_AMOUNT);
+                updateSignalBar();
+            }
+        }, DEPLETE_INTERVAL);
+
+        // Add click listener to static
+        staticAsset.addEventListener('click', handleTVHit);
+    }
+
+    function handleTVHit() {
+        if (!isGameActive) return;
+
+        // Add signal
+        signalLevel = Math.min(100, signalLevel + FILL_AMOUNT);
+        updateSignalBar();
+
+        // Shake effect
+        staticAsset.classList.remove('tv-shake');
+        void staticAsset.offsetWidth; // Trigger reflow to restart animation
+        staticAsset.classList.add('tv-shake');
+
+        // Pulse effect on bar
+        signalBarContainer.classList.add('active');
+        setTimeout(() => signalBarContainer.classList.remove('active'), 150);
+
+        // Check for completion
+        if (signalLevel >= 100) {
+            completeMinigame();
+        }
+    }
+
+    function updateSignalBar() {
+        signalBarFill.style.width = signalLevel + '%';
+
+        // Update static opacity (more signal = less static)
+        staticAsset.style.opacity = 1 - (signalLevel / 100) * 0.9; // Keep minimum 10% opacity until complete
+    }
+
+    function completeMinigame() {
+        isGameActive = false;
+        clearInterval(depleteInterval);
+        staticAsset.removeEventListener('click', handleTVHit);
+
+        // Hide guide character
+        const guideCharacter = document.getElementById('minigame-guide');
+        if (guideCharacter) guideCharacter.classList.add('hidden');
+
+        // Hide text bubble
+        const textBubble = document.getElementById('text-bubble');
+        if (textBubble) textBubble.classList.add('hidden');
+
+        // Hide signal bar
+        signalBarContainer.style.display = 'none';
+
+        // Fade out static completely
+        staticAsset.style.transition = 'opacity 0.3s ease';
+        staticAsset.style.opacity = '0';
+
+        // Start main TV sequence
+        setTimeout(() => {
+            startTVSequence();
+        }, 300);
+    }
+
+    function startTVSequence() {
+        // Start page animations sequence
+        // 1. Background TV glitch (starts immediately)
+        backgroundAsset.style.animation = 'crtPowerOn 0.6s ease-out forwards';
+
+        // 2. Text TV glitch + floating (starts after background)
+        setTimeout(() => {
+            textAsset.style.animation = 'crtPowerOn 0.6s ease-out forwards 0s, floating 3s ease-in-out infinite 0.6s';
+        }, 300);
+
+        // 3. Character slide in (starts at 0.6s delay)
+        setTimeout(() => {
+            characterAsset.classList.add('intro-animation');
+
+            // Switch to floating after intro finishes
+            setTimeout(() => {
+                characterAsset.classList.remove('intro-animation');
+                characterAsset.classList.add('floating-animation');
+            }, 1000); // Duration of slideInRight
+        }, 600);
+
+        // 4. Buttons slide up (starts at 1.8s delay)
+        setTimeout(() => {
+            yesBtn.style.animation = 'slideUpBtn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards';
+            noBtn.style.animation = 'slideUpBtn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards';
+        }, 1800);
+    }
 
     // ========== CHARACTER POSITION CONTROLS ==========
     // Adjust these values to fine-tune vertical positions

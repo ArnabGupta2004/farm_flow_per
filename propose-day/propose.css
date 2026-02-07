@@ -48,6 +48,176 @@ body {
     /* Animation: CRT Power On - WILL BE TRIGGERED BY JS */
     opacity: 0;
     /* animation removed - will be added by JS */
+    pointer-events: none;
+}
+
+#static-asset {
+    /* CONTROL VARIABLES START */
+    --static-width: 36.8vw;
+    --static-height: 42.2vh;
+    --static-top: 22.2vh;
+    --static-left: 22.8vw;
+    /* CONTROL VARIABLES END */
+
+    width: var(--static-width);
+    height: var(--static-height);
+    top: var(--static-top);
+    left: var(--static-left);
+
+    max-width: auto;
+    max-height: auto;
+    object-fit: fill;
+    z-index: 5;
+    /* Above room for mini-game clickability */
+
+    /* Animation: CRT Power On - WILL BE TRIGGERED BY JS */
+    opacity: 0;
+    /* animation removed - will be added by JS */
+    cursor: pointer;
+    /* Make clickable for mini-game */
+}
+
+/* Shake animation for hitting TV */
+.tv-shake {
+    animation: tvShake 0.1s ease-in-out;
+}
+
+@keyframes tvShake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px) rotate(-0.5deg);
+    }
+
+    75% {
+        transform: translateX(5px) rotate(0.5deg);
+    }
+}
+
+/* Signal Bar Styles */
+#signal-bar-container {
+    position: absolute;
+    top: 10%;
+    left: 53%;
+    transform: translateX(-50%);
+    z-index: 500;
+    display: none;
+    /* Hidden initially, shown during mini-game */
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+#signal-bar-label {
+    font-family: 'Love Ya Like A Sister', cursive;
+    font-size: 1.2rem;
+    color: #944067;
+    font-weight: bold;
+}
+
+#signal-bar {
+    width: 500px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 3px solid #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+#signal-bar-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77);
+    border-radius: 7px;
+    transition: width 0.05s ease-out;
+    box-shadow: 0 0 10px currentColor;
+}
+
+/* Pulse effect when bar is filling */
+#signal-bar-container.active #signal-bar {
+    animation: signalPulse 0.3s ease-in-out infinite;
+}
+
+@keyframes signalPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(107, 203, 119, 0.8);
+    }
+}
+
+/* Character Guide */
+.character-guide {
+    /* CONTROL VARIABLES START */
+    --char-width: 300px;
+    --char-height: auto;
+    --char-bottom: -10px;
+    --char-left: 0px;
+    /* CONTROL VARIABLES END */
+
+    position: fixed;
+    bottom: var(--char-bottom);
+    left: var(--char-left);
+    width: var(--char-width);
+    height: var(--char-height);
+    z-index: 30000;
+    /* Matching remote control z-index */
+    pointer-events: none;
+    transition: all 1s ease-in-out;
+    /* Ensure smooth transition for all properties */
+}
+
+.character-guide.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(100%);
+    /* Slide down completely */
+    transition: all 1s ease-in-out;
+}
+
+.character-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    transform: scaleX(-1);
+    /* Flip horizontally */
+}
+
+/* Text Bubble */
+#text-bubble {
+    /* CONTROL VARIABLES START */
+    --bubble-img-width: 300px;
+    --bubble-img-bottom: 350px;
+    --bubble-img-left: 8vw;
+    /* CONTROL VARIABLES END */
+
+    position: fixed;
+    bottom: var(--bubble-img-bottom);
+    left: var(--bubble-img-left);
+    width: var(--bubble-img-width);
+    height: auto;
+    z-index: 30000;
+    /* Above character guide (100) */
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#text-bubble.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
 }
 
 #room-asset {
@@ -68,6 +238,8 @@ body {
     max-height: auto;
     object-fit: contain;
     z-index: 2;
+    pointer-events: none;
+    /* Allow clicks to pass through to static */
 }
 
 #text-asset {
@@ -87,6 +259,8 @@ body {
     max-height: auto;
     object-fit: contain;
     z-index: 10;
+    pointer-events: none;
+    /* Allow clicks to pass through */
     /* Between Room (2) might need adjusting if room is overlay? 
                   User said "between b.png and room.png layers". 
                   b.png is z-index 1. room.png is z-index 2.
@@ -299,6 +473,66 @@ body {
     }
 }
 
+/* Remote Control Styles */
+#remote-control {
+    width: 8%;
+    height: auto;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    /* Start hidden below screen */
+    z-index: 30000;
+    /* Above room and everything else */
+    cursor: pointer;
+    pointer-events: auto;
+    transition: filter 0.1s ease;
+    /* Only transition filter, not transform */
+    transform-origin: center center;
+    /* Ensure scaling is from center */
+}
+
+#remote-control:hover {
+    filter: brightness(1.5);
+    scale: 1.03;
+    transition: scale 0.1s ease, filter 0.1s ease;
+}
+
+#remote-control:active {
+    filter: brightness(0.9);
+}
+
+#remote-control.remote-slide-up {
+    pointer-events: auto !important;
+}
+
+.remote-slide-up {
+    animation: slideUpRemote 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.remote-slide-down {
+    animation: slideDownRemote 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+}
+
+@keyframes slideUpRemote {
+    from {
+        transform: translateX(-50%) translateY(120%);
+    }
+
+    to {
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes slideDownRemote {
+    from {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    to {
+        transform: translateX(-50%) translateY(120%);
+    }
+}
+
 /* Success Popup Styles */
 .popup-overlay {
     position: fixed;
@@ -469,8 +703,10 @@ body {
     }
 }
 
+
 .screen-exit {
     animation: fadeOutOverlay 0.8s ease-out forwards !important;
+    pointer-events: none !important;
 }
 
 /* Start Screen Animations */
