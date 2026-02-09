@@ -2,14 +2,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const factoryBg = document.getElementById('factory-bg');
     const conveyorBelt = document.getElementById('conveyor-belt');
     const teddy = document.getElementById('teddy');
+    const teddySprite = document.querySelector('.teddy-sprite'); // New sprite element
     const gameContainer = document.getElementById('game-container');
 
     let isJumping = false;
     let gameRunning = false;
     let obstacleSpawnInterval;
     let gameTimerInterval;
+    let difficultyInterval;
     let startTime;
-    const WIN_TIME = 30000; // 30 seconds to win
+    const WIN_TIME = 60000; // 60 seconds to win
+
+    // Difficulty Variables
+    // Difficulty Variables
+    let difficultyMultiplier = 1.0;
+    const MAX_DIFFICULTY = 1.9; // Max 1.9x speed (Was 1.6)
+    const BASE_BELT_DURATION = 6.67; // Seconds for one belt cycle
+    const BASE_SPAWN_MIN = 1600; // Was 2000
+    const BASE_SPAWN_MAX = 2100; // Was 2500
+
+    // Powerup State
+    let hasShield = false;
 
     // Jump function
     function jump() {
@@ -17,53 +30,100 @@ document.addEventListener('DOMContentLoaded', () => {
             isJumping = true;
             teddy.classList.add('jumping');
 
-            setTimeout(() => {
+            // Adjust jump animation speed slightly based on difficulty
+            // Cap jump speed increase so it doesn't become impossible
+            const jumpDuration = 1.2 / Math.min(difficultyMultiplier, 1.4);
+            teddy.style.animationDuration = `${jumpDuration}s`;
+
+            // Remove playing class to revert to static first frame
+            teddy.classList.remove('playing');
+
+            // Use animationend for precise timing instead of setTimeout
+            const onJumpEnd = () => {
                 teddy.classList.remove('jumping');
+                teddy.style.animationDuration = ''; // Reset
+
+                // Resume running animation
+                if (gameRunning) {
+                    teddy.classList.add('playing');
+                    // Ensure speed is restored immediately
+                    if (teddySprite) setAnimationSpeed(teddySprite, difficultyMultiplier);
+                }
+
                 isJumping = false;
-            }, 1200); // Match animation duration
+                teddy.removeEventListener('animationend', onJumpEnd);
+            };
+
+            teddy.addEventListener('animationend', onJumpEnd);
         }
     }
 
-    // Spawn obstacle
-    function spawnObstacle(type) {
-        const obstacle = document.createElement('div');
-        obstacle.classList.add('obstacle');
-        if (type === 'scissor') {
-            obstacle.classList.add('scissor');
-        }
-        gameContainer.appendChild(obstacle);
+    // Spawn Object (Obstacle or Powerup)
+    function spawnObject(type) {
+        const obj = document.createElement('div');
 
-        // Calculate movement speed to match belt
-        // Belt moves 1333px in 6.67s = 199.85px/s
-        // Screen width + obstacle width to fully cross
-        const distance = window.innerWidth + 100;
-        const duration = (distance / 1333) * 6.67; // Scale duration based on distance
-
-        obstacle.style.animation = `moveObstacle ${duration}s linear`;
-
-        // Remove obstacle after animation completes
-        setTimeout(() => {
-            if (obstacle.parentElement) {
-                obstacle.remove();
+        // Determine if powerup or obstacle
+        if (type === 'shield') {
+            obj.classList.add('powerup', 'shield');
+        } else {
+            obj.classList.add('obstacle');
+            if (type === 'scissor') {
+                obj.classList.add('scissor');
             }
-        }, duration * 1000);
+        }
+
+        gameContainer.appendChild(obj);
+
+        const distance = window.innerWidth + 100;
+        const baseDuration = (distance / 1333) * 6.67;
+        const duration = baseDuration / difficultyMultiplier;
+
+        // Apply movement animation
+        // Use css variable or inline style for duration? 
+        // We already have keyframes moveObstacle, let's reuse it for everything moving with belt
+        obj.style.animation = `moveObstacle ${duration}s linear`;
+
+        // If powerup, add float animation too? (handled in CSS via class)
+
+        setTimeout(() => {
+            if (obj.parentElement) {
+                obj.remove();
+            }
+        }, duration * 1000 + 100);
     }
 
-    // Random obstacle spawning
-    function startObstacleSpawning() {
-        function scheduleNextObstacle() {
-            // Min delay 1500ms > Jump Duration 1200ms ensures player always hits ground before next obstacle
-            const randomDelay = Math.random() * 2000 + 1500; // 1.5-3.5 seconds
+    // Random spawning logic
+    function startObjectSpawning() {
+        function scheduleNext() {
+            if (!gameRunning) return;
+
+            const currentMin = BASE_SPAWN_MIN / difficultyMultiplier;
+            const currentMax = BASE_SPAWN_MAX / difficultyMultiplier;
+            const safeMin = 900; // Was 1200
+            const actualMin = Math.max(currentMin, safeMin);
+            const actualMax = Math.max(currentMax, actualMin + 500);
+
+            const randomDelay = Math.random() * (actualMax - actualMin) + actualMin;
+
             obstacleSpawnInterval = setTimeout(() => {
                 if (gameRunning) {
-                    // 60% Crate, 40% Scissor
-                    const type = Math.random() > 0.4 ? 'crate' : 'scissor';
-                    spawnObstacle(type);
-                    scheduleNextObstacle();
+                    const rand = Math.random();
+                    let type;
+
+                    // 15% Chance for Shield (if not already shielded)
+                    if (rand < 0.15 && !hasShield) {
+                        type = 'shield';
+                    } else {
+                        // Obstacles: 60% Crate, 40% Scissor 
+                        type = Math.random() > 0.4 ? 'crate' : 'scissor';
+                    }
+
+                    spawnObject(type);
+                    scheduleNext();
                 }
             }, randomDelay);
         }
-        scheduleNextObstacle();
+        scheduleNext();
     }
 
     // Add obstacle movement animation dynamically
@@ -126,10 +186,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let collisionFrameId;
 
+    // Helper to set playback rate for an element's animations
+    function setAnimationSpeed(element, rate) {
+        const animations = element.getAnimations();
+        animations.forEach(anim => {
+            anim.playbackRate = rate;
+        });
+    }
+
+    // Shield Functions
+    function activateShield() {
+        hasShield = true;
+        teddy.classList.add('shielded');
+        // Optional: Play sound
+    }
+
+    function useShield(obstacle) {
+        hasShield = false;
+        teddy.classList.remove('shielded');
+        // Optional: Play break sound
+
+        // Visual feedback for break
+        gameContainer.classList.add('shake', 'flash-red');
+        setTimeout(() => gameContainer.classList.remove('shake', 'flash-red'), 400);
+
+        // Blast effect on the obstacle
+        if (obstacle) {
+            obstacle.classList.add('blast');
+            // Remove after blast animation
+            setTimeout(() => obstacle.remove(), 400);
+        }
+    }
+
+    // Update Difficulty Loop
+    function updateDifficulty() {
+        if (!gameRunning) return;
+
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / WIN_TIME, 1);
+
+        // Linear increase from 1.0 to MAX_DIFFICULTY
+        difficultyMultiplier = 1.0 + (progress * (MAX_DIFFICULTY - 1.0));
+
+        // Update Animation Speeds
+        // Factory BG (Parallax)
+        setAnimationSpeed(factoryBg, difficultyMultiplier);
+
+        // Conveyor Belt
+        setAnimationSpeed(conveyorBelt, difficultyMultiplier);
+
+        // Teddy (Run cycle - Check sprite)
+        // Teddy (Jump - Check parent)
+        setAnimationSpeed(teddy, difficultyMultiplier);
+        if (teddySprite) setAnimationSpeed(teddySprite, difficultyMultiplier);
+
+        // Existing Obstacles? 
+        // Updating them might cause jumps, but let's try updating their playback rate too
+        // so they don't look "detached" from the belt.
+        document.querySelectorAll('.obstacle').forEach(obs => {
+            setAnimationSpeed(obs, difficultyMultiplier);
+        });
+    }
+
     // Game Over Function (Loss)
     function gameOver() {
         gameRunning = false;
         clearInterval(gameTimerInterval);
+        clearInterval(difficultyInterval);
         clearTimeout(obstacleSpawnInterval);
         cancelAnimationFrame(collisionFrameId);
 
@@ -137,10 +260,11 @@ document.addEventListener('DOMContentLoaded', () => {
         factoryBg.classList.add('paused');
         conveyorBelt.classList.add('paused');
         teddy.classList.add('paused');
+        if (teddySprite) teddySprite.style.animationPlayState = 'paused';
 
-        // Pause all existing obstacles
-        document.querySelectorAll('.obstacle').forEach(obs => {
-            obs.style.animationPlayState = 'paused';
+        // Pause all existing obstacles and powerups
+        document.querySelectorAll('.obstacle, .powerup').forEach(el => {
+            el.style.animationPlayState = 'paused';
         });
 
         // Set Popup for Loss
@@ -157,17 +281,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function startEndingSequence() {
         gameRunning = false; // Stop player inputs
         clearInterval(gameTimerInterval);
+        clearInterval(difficultyInterval);
         clearTimeout(obstacleSpawnInterval);
         cancelAnimationFrame(collisionFrameId);
 
-        // 1. Fade out obstacles
-        document.querySelectorAll('.obstacle').forEach(obs => {
-            obs.classList.add('fade-out');
-            setTimeout(() => obs.remove(), 1000); // Remove after fade
+        // 1. Fade out obstacles and powerups
+        document.querySelectorAll('.obstacle, .powerup').forEach(el => {
+            el.classList.add('fade-out');
+            setTimeout(() => el.remove(), 1000); // Remove after fade
         });
 
         // 2. Add Cozy Glow
         gameContainer.classList.add('cozy-glow');
+
+        // Reset animation speeds to normal for the cinematic
+        setAnimationSpeed(factoryBg, 1);
+        setAnimationSpeed(conveyorBelt, 1);
+        setAnimationSpeed(teddy, 1); // Only relevant if he was still running
 
         // 3. Bring in the gift
         const teddyRect = teddy.getBoundingClientRect();
@@ -205,6 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
         factoryBg.classList.add('paused');
         conveyorBelt.classList.add('paused');
         teddy.classList.add('paused'); // Stop running animation
+        if (teddySprite) teddySprite.style.animationPlayState = 'paused';
 
         // Hearts Explosion
         for (let i = 0; i < 20; i++) {
@@ -247,14 +378,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Reset Game Function
     function resetGame() {
-        // Clear all obstacles
-        document.querySelectorAll('.obstacle').forEach(obs => obs.remove());
+        // Clear all obstacles and powerups
+        document.querySelectorAll('.obstacle, .powerup').forEach(el => el.remove());
         document.querySelectorAll('.heart').forEach(h => h.remove());
 
         // Reset classes
         factoryBg.classList.remove('paused');
         conveyorBelt.classList.remove('paused');
         teddy.classList.remove('paused', 'jumping');
+        if (teddySprite) teddySprite.style.animationPlayState = ''; // Reset sprite state
         gameContainer.classList.remove('cozy-glow');
         gameOverPopup.classList.remove('final-win');
 
@@ -275,6 +407,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset State
         isJumping = false;
         gameRunning = true;
+        difficultyMultiplier = 1.0; // Reset difficulty
+
+        // Reset animation speeds
+        setAnimationSpeed(factoryBg, 1);
+        setAnimationSpeed(conveyorBelt, 1);
+        setAnimationSpeed(teddy, 1);
 
         // Start factory background animation
         factoryBg.classList.add('playing');
@@ -285,11 +423,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Start teddy run animation
         teddy.classList.add('playing');
 
-        // Start spawning obstacles
-        startObstacleSpawning();
+        // Start spawning
+        startObjectSpawning();
 
         // Start checking collisions
         checkCollision();
+
 
         // Start Timer
         startGameTimer();
@@ -314,6 +453,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 gameWin();
             }
         }, 100);
+
+        // Separate Interval for Difficulty Updates (e.g., every 500ms)
+        difficultyInterval = setInterval(updateDifficulty, 500);
     }
 
     // Collision Detection
@@ -323,37 +465,53 @@ document.addEventListener('DOMContentLoaded', () => {
         const teddyRect = teddy.getBoundingClientRect();
         // Shrink teddy hitbox significantly for fairness
         const teddyHitbox = {
-            top: teddyRect.top + 30,
-            bottom: teddyRect.bottom - 20,
-            left: teddyRect.left + 70,
-            right: teddyRect.right - 70
+            top: teddyRect.top + 30, // Keep top margin
+            bottom: teddyRect.bottom - 20, // Keep bottom margin
+            left: teddyRect.left + 32, // Adjusted for 124px width (was 70 for 200px)
+            right: teddyRect.right - 32 // Adjusted for 124px width
         };
 
-        const obstacles = document.querySelectorAll('.obstacle');
-        obstacles.forEach(obs => {
-            const obsRect = obs.getBoundingClientRect();
-            // Shrink obstacle hitbox
-            const obsHitbox = {
-                top: obsRect.top + 15,
-                bottom: obsRect.bottom - 10,
-                left: obsRect.left + 35,
-                right: obsRect.right - 35
+        // Check Obstacles & Powerups
+        const objects = document.querySelectorAll('.obstacle, .powerup');
+        objects.forEach(obj => {
+            const objRect = obj.getBoundingClientRect();
+            // Shrink hitbox
+            const objHitbox = {
+                top: objRect.top + 15,
+                bottom: objRect.bottom - 10,
+                left: objRect.left + 35,
+                right: objRect.right - 35
             };
 
             if (
-                teddyHitbox.left < obsHitbox.right &&
-                teddyHitbox.right > obsHitbox.left &&
-                teddyHitbox.top < obsHitbox.bottom &&
-                teddyHitbox.bottom > obsHitbox.top
+                teddyHitbox.left < objHitbox.right &&
+                teddyHitbox.right > objHitbox.left &&
+                teddyHitbox.top < objHitbox.bottom &&
+                teddyHitbox.bottom > objHitbox.top
             ) {
-                gameOver();
+                // Collision Detected!
+                if (obj.classList.contains('powerup')) {
+                    // Handle Powerup Collection
+                    if (obj.classList.contains('shield')) {
+                        activateShield();
+                    }
+                    obj.remove();
+                } else {
+                    // Handle Obstacle Collision
+                    if (hasShield) {
+                        // Shield protects!
+                        useShield(obj);
+                        // obj.remove(); // Handled in useShield after blast
+                    } else {
+                        gameOver();
+                    }
+                }
             }
         });
 
         collisionFrameId = requestAnimationFrame(checkCollision);
     }
 
-    // Begin game
     // Begin game
     const startBtn = document.getElementById('start-btn');
     const startTitle = document.getElementById('start-title');
@@ -400,6 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
             gameRunning = true;
+            difficultyMultiplier = 1.0;
 
             // Reset animations to running state
             factoryBg.classList.remove('paused');
@@ -412,11 +571,15 @@ document.addEventListener('DOMContentLoaded', () => {
             conveyorBelt.classList.add('playing');
 
             // Start teddy run animation
-            teddy.classList.remove('paused');
             teddy.classList.add('playing');
+            if (teddySprite) teddySprite.style.animationPlayState = 'running';
 
-            // Start spawning obstacles
-            startObstacleSpawning();
+            // Reset Shield
+            hasShield = false;
+            teddy.classList.remove('shielded');
+
+            // Start spawning
+            startObjectSpawning();
 
             // Start checking collisions
             checkCollision();
@@ -435,7 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('click', (e) => {
-        if (gameRunning && e.target !== beginBtn && e.target !== restartBtn) {
+        if (gameRunning && e.target.id !== 'restart-btn' && e.target.id !== 'calendar-btn' && e.target.id !== 'start-btn') {
             jump();
         }
     });
